@@ -1,16 +1,16 @@
 {
-  "name": "access-token-jwt",
-  "private": true,
+  "name": "@executivehomes/access-token-jwt",
   "license": "MIT",
   "author": "Auth0 <support@auth0.com>",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest test --coverage",
     "lint": "eslint --fix --ext .ts ./src",
     "prebuild": "rimraf dist",
-    "build": "tsc"
+    "build": "tsc",
+    "release": "npm run prebuild && npm run build && cd dist && npm publish"
   },
   "devDependencies": {
     "@tsconfig/node12": "^1.0.11",
