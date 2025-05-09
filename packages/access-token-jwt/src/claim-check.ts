@@ -1,9 +1,9 @@
-import {
-  InvalidTokenError,
-  InsufficientScopeError,
-  UnauthorizedError,
-} from 'oauth2-bearer';
 import type { JWTPayload } from 'jose';
+import {
+  InsufficientScopeError,
+  InvalidTokenError,
+  UnauthorizedError,
+} from './errors';
 
 export type JSONPrimitive = string | number | boolean | null;
 
@@ -20,28 +20,30 @@ const checkJSONPrimitive = (value: JSONPrimitive): void => {
   }
 };
 
-const isClaimIncluded = (
-  claim: string,
-  expected: JSONPrimitive[],
-  matchAll = true
-): ((payload: JWTPayload) => boolean) => (payload) => {
-  if (!(claim in payload)) {
-    throw new InvalidTokenError(`Missing '${claim}' claim`);
-  }
+const isClaimIncluded =
+  (
+    claim: string,
+    expected: JSONPrimitive[],
+    matchAll = true
+  ): ((payload: JWTPayload) => boolean) =>
+  (payload) => {
+    if (!(claim in payload)) {
+      throw new InvalidTokenError(`Missing '${claim}' claim`);
+    }
 
-  let actual = payload[claim];
-  if (typeof actual === 'string') {
-    actual = actual.split(' ');
-  } else if (!Array.isArray(actual)) {
-    return false;
-  }
+    let actual = payload[claim];
+    if (typeof actual === 'string') {
+      actual = actual.split(' ');
+    } else if (!Array.isArray(actual)) {
+      return false;
+    }
 
-  actual = new Set(actual as JSONPrimitive[]);
+    actual = new Set(actual as JSONPrimitive[]);
 
-  return matchAll
-    ? expected.every(Set.prototype.has.bind(actual))
-    : expected.some(Set.prototype.has.bind(actual));
-};
+    return matchAll
+      ? expected.every(Set.prototype.has.bind(actual))
+      : expected.some(Set.prototype.has.bind(actual));
+  };
 
 export type RequiredScopes<R = ClaimChecker> = (scopes: string | string[]) => R;
 
